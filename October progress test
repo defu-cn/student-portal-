@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malvern College Qingdao 学生系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#166534',
+                        lightgreen: '#dcfce7',
+                        bgpage: '#f5f5f5',
+                        malvernGreen: '#197c38',
+                    },
+                    fontFamily: {
+                        sans: ['system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .tab-active {
+                @apply text-malvernGreen;
+            }
+            .tab-normal {
+                @apply text-gray-500;
+            }
+            .score-tag {
+                @apply bg-lightgreen text-primary font-bold text-xl px-5 py-2 rounded-lg;
+            }
+            .card-shadow {
+                @apply shadow-sm bg-white rounded-xl p-6 my-4;
+            }
+            .func-card {
+                @apply flex flex-col items-center justify-center py-4 px-2;
+            }
+            .func-icon {
+                @apply w-14 h-14 text-malvernGreen text-4xl mb-2;
+            }
+        }
+    </style>
+</head>
+<body class="bg-bgpage min-h-screen pb-24">
+    <div class="max-w-xl mx-auto">
+        <!-- ====================== 页面1：首页 ====================== -->
+        <div id="pageHome" class="px-4">
+            <h1 class="text-center text-2xl font-bold py-4">首页</h1>
+            <!-- 顶部横幅区域 -->
+            <div class="rounded-2xl overflow-hidden bg-gray-200 mb-4">
+                <div class="h-60 bg-[#e8f3ec] flex items-center justify-center">
+                    <i class="fa fa-book text-6xl text-malvernGreen opacity-70"></i>
+                </div>
+            </div>
+            <!-- 近期公告 -->
+            <div class="bg-white rounded-xl p-5 mb-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-xl font-bold text-malvernGreen">近期公告</h2>
+                        <p class="text-gray-500 mt-2">2026-05-07</p>
+                        <p class="text-gray-700 mt-1 text-lg">LSE+4、佐治亚理工、港中文全奖录取不断！</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-malvernGreen">MALVERN</p>
+                        <p class="text-xs text-gray-500">COLLEGE QINGDAO</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 学生功能模块 -->
+            <div class="bg-white rounded-xl p-5">
+                <div class="flex justify-between items-start mb-6">
+                    <h2 class="text-xl font-bold text-malvernGreen">学生功能</h2>
+                    <div class="text-right">
+                        <p class="font-bold text-malvernGreen">MALVERN</p>
+                        <p class="text-xs text-gray-500">COLLEGE QINGDAO</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="func-card">
+                        <i class="fa fa-clock-o func-icon"></i>
+                        <span class="text-gray-700">我的请假</span>
+                    </div>
+                    <div class="func-card">
+                        <i class="fa fa-university func-icon"></i>
+                        <span class="text-gray-700">离返校</span>
+                    </div>
+                    <div id="btnExamEntry" class="func-card cursor-pointer">
+                        <i class="fa fa-list-alt func-icon"></i>
+                        <span class="text-gray-700">考试报名</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================== 页面2：考试报名/成绩查询页 ====================== -->
+        <div id="pageExam" class="hidden px-4">
+            <p class="text-malvernGreen text-lg font-medium py-3">*考试报名系统操作说明</p>
+            <!-- 成绩查询横幅 -->
+            <div class="bg-malvernGreen rounded-xl p-6 mb-6 flex items-center justify-between">
+                <h2 class="text-white text-4xl font-bold">成绩查询</h2>
+                <i class="fa fa-paper-plane text-white text-5xl opacity-80"></i>
+            </div>
+            <!-- 考季切换标签 -->
+            <div class="flex mb-10">
+                <div id="tabCurrentSeason" class="flex-1 py-3 bg-malvernGreen text-white text-center rounded-full font-bold">当前考季</div>
+                <div id="tabHistorySeason" class="flex-1 py-3 text-gray-600 text-center rounded-full font-bold">历史考季</div>
+            </div>
+            <!-- 空记录区域 -->
+            <div class="text-center mt-20">
+                <i class="fa fa-file-text-o text-8xl text-gray-300"></i>
+                <p class="text-gray-500 text-2xl mt-6">暂未查询到外部考试记录</p>
+                <button id="jumpToScorePage" class="mt-10 px-8 py-3 bg-malvernGreen text-white rounded-full text-lg">成绩查询</button>
+            </div>
+        </div>
+
+        <!-- ====================== 页面3：个人中心 ====================== -->
+        <div id="pageProfile" class="hidden">
+            <div class="bg-malvernGreen text-white p-6 pb-20">
+                <div class="flex items-center gap-5">
+                    <div class="w-24 h-24 bg-white rounded-lg overflow-hidden">
+                        <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <i class="fa fa-user text-4xl text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold">易怡廷</h2>
+                        <p class="text-xl mt-2">20250149</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-4 -mt-12 bg-white rounded-xl overflow-hidden relative z-10">
+                <div class="flex justify-between px-5 py-4 border-b border-gray-200">
+                    <span class="text-gray-700">学号/Stu No</span>
+                    <span class="text-gray-800">20250149</span>
+                </div>
+                <div class="flex justify-between px-5 py-4 border-b border-gray-200">
+                    <span class="text-gray-700">年级/Form</span>
+                    <span class="text-gray-800">L6</span>
+                </div>
+                <div class="flex justify-between px-5 py-4 border-b border-gray-200">
+                    <span class="text-gray-700">宿舍楼号/Building No</span>
+                    <span class="text-gray-800">4宿</span>
+                </div>
+                <div class="flex justify-between px-5 py-4 border-b border-gray-200">
+                    <span class="text-gray-700">宿舍/House</span>
+                    <span class="text-gray-800">MacLaurin</span>
+                </div>
+                <div class="flex justify-between px-5 py-4 border-b border-gray-200">
+                    <span class="text-gray-700">房间号/Room</span>
+                    <span class="text-gray-800">513</span>
+                </div>
+                <div class="flex justify-between px-5 py-4 border-b border-gray-200">
+                    <span class="text-gray-700">助理舍监/AHSM</span>
+                    <span class="text-gray-800">4#宿舍楼Maclaurin</span>
+                </div>
+                <div class="flex justify-between px-5 py-4 border-b border-gray-200">
+                    <span class="text-gray-700">上网账号/Network ID</span>
+                    <span class="text-gray-800">S137</span>
+                </div>
+                <div class="flex justify-between px-5 py-4 border-b border-gray-200">
+                    <span class="text-gray-700">上网密码/Password</span>
+                    <span class="text-gray-800">957W460128</span>
+                </div>
+                <div class="flex justify-between px-5 py-4">
+                    <span class="text-gray-700">Language</span>
+                    <span class="text-gray-800 flex items-center">简体中文 <i class="fa fa-chevron-down ml-2 text-gray-400"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================== 页面4：原来的成绩系统页面（科目汇总/成绩单/复议） ====================== -->
+        <div id="pageScoreSystem" class="hidden px-4">
+            <!-- 标签切换栏 -->
+            <div class="flex p-4 gap-2 sticky top-0 bg-white z-10 -mx-4 px-4">
+                <button id="tabReconsider" class="flex-1 py-3 rounded-full text-lg font-medium tab-normal transition-all">成绩复议</button>
+                <button id="tabSubject" class="flex-1 py-3 rounded-full text-lg font-medium tab-active transition-all">科目汇总</button>
+                <button id="tabReport" class="flex-1 py-3 rounded-full text-lg font-medium tab-normal transition-all">成绩单汇总</button>
+            </div>
+            <!-- 成绩复议 -->
+            <div id="pageReconsider" class="hidden">
+                <div class="text-center text-gray-400 mt-20">
+                    <i class="fa fa-file-text-o text-5xl mb-4"></i>
+                    <p>暂无复议信息</p>
+                </div>
+            </div>
+            <!-- 科目汇总 -->
+            <div id="pageSubject">
+                <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-bold text-gray-800 mb-4">科目汇总</h2>
+                <div class="card-shadow">
+                    <h3 class="text-2xl font-bold text-gray-800">Alevel 数学 S1</h3>
+                    <p class="text-gray-500 mt-1">WMA11</p>
+                    <div class="flex justify-between items-center mt-5">
+                        <span class="text-lg text-gray-700">2026 October Progress Test</span>
+                        <span class="score-tag">7</span>
+                    </div>
+                </div>
+                <div class="card-shadow">
+                    <h3 class="text-2xl font-bold text-gray-800">Alevel 会计</h3>
+                    <p class="text-gray-500 mt-1">WMA12</p>
+                    <div class="flex justify-between items-center mt-5">
+                        <span class="text-lg text-gray-700">2026 October Progress Test</span>
+                        <span class="score-tag">7</span>
+                    </div>
+                </div>
+                <div class="card-shadow">
+                    <h3 class="text-2xl font-bold text-gray-800">Alevel 商务 Unit 1</h3>
+                    <p class="text-gray-500 mt-1">4WCH1</p>
+                    <div class="flex justify-between items-center mt-5">
+                        <span class="text-lg text-gray-700">2026 October Progress Test</span>
+                        <span class="score-tag">7</span>
+                    </div>
+                </div>
+                <div class="card-shadow">
+                    <h3 class="text-2xl font-bold text-gray-800">IELTS（阅读，写作）</h3>
+                    <p class="text-gray-500 mt-1">4WCH2</p>
+                    <div class="flex justify-between items-center mt-5">
+                        <span class="text-lg text-gray-700">2026 October Progress Test</span>
+                        <span class="score-tag">6.5</span>
+                    </div>
+                </div>
+                <div class="card-shadow">
+                    <h3 class="text-2xl font-bold text-gray-800">Alevel 经济 Unit 1</h3>
+                    <p class="text-gray-500 mt-1">4WEC1</p>
+                    <div class="flex justify-between items-center mt-5">
+                        <span class="text-lg text-gray-700">2026 October Progress Test</span>
+                        <span class="score-tag">7</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 成绩单汇总 -->
+            <div id="pageReport" class="hidden">
+                <div class="card-shadow">
+                    <div class="text-center border-b pb-4 mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">A-Level 阶段成绩单</h2>
+                        <p class="text-gray-500 mt-2">2026 October Progress Test</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-3 gap-3 font-semibold text-gray-600 border-b pb-2">
+                            <span>科目名称</span>
+                            <span>科目代码</span>
+                            <span class="text-right">得分</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-gray-700">
+                            <span>Alevel 数学 S1</span>
+                            <span>WMA11</span>
+                            <span class="text-right font-bold text-primary">7</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-gray-700">
+                            <span>Alevel 会计</span>
+                            <span>WMA12</span>
+                            <span class="text-right font-bold text-primary">7</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-gray-700">
+                            <span>Alevel 商务 Unit 1</span>
+                            <span>4WCH1</span>
+                            <span class="text-right font-bold text-primary">7</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-gray-700">
+                            <span>IELTS（阅读，写作）</span>
+                            <span>4WCH2</span>
+                            <span class="text-right font-bold text-primary">6.5</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-gray-700">
+                            <span>Alevel 经济 Unit 1</span>
+                            <span>4WEC1</span>
+                            <span class="text-right font-bold text-primary">7</span>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-4 border-t">
+                        <div class="flex justify-between text-gray-700">
+                            <span>参评科目数量：5</span>
+                            <span>优秀科目：4</span>
+                        </div>
+                        <p class="text-gray-500 text-sm mt-4">备注：本次为阶段进度测试成绩，非正式全球统考成绩</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================== 底部全局Tab栏（固定在底部） ====================== -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+        <div class="max-w-xl mx-auto flex">
+            <div id="bottomTabHome" class="flex-1 py-3 text-center tab-active">
+                <i class="fa fa-home text-2xl"></i>
+                <p class="text-sm mt-1">首页</p>
+            </div>
+            <div id="bottomTabProfile" class="flex-1 py-3 text-center tab-normal">
+                <i class="fa fa-user-circle-o text-2xl"></i>
+                <p class="text-sm mt-1">个人中心</p>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // 页面元素
+    const pageHome = document.getElementById('pageHome');
+    const pageExam = document.getElementById('pageExam');
+    const pageProfile = document.getElementById('pageProfile');
+    const pageScoreSystem = document.getElementById('pageScoreSystem');
+
+    const bottomTabHome = document.getElementById('bottomTabHome');
+    const bottomTabProfile = document.getElementById('bottomTabProfile');
+
+    const btnExamEntry = document.getElementById('btnExamEntry');
+    const jumpToScorePage = document.getElementById('jumpToScorePage');
+
+    // 成绩系统内部标签
+    const tabReconsider = document.getElementById('tabReconsider');
+    const tabSubject = document.getElementById('tabSubject');
+    const tabReport = document.getElementById('tabReport');
+    const pageReconsider = document.getElementById('pageReconsider');
+    const pageSubject = document.getElementById('pageSubject');
+    const pageReport = document.getElementById('pageReport');
+
+    // 隐藏所有页面
+    function hideAllPages() {
+        pageHome.classList.add('hidden');
+        pageExam.classList.add('hidden');
+        pageProfile.classList.add('hidden');
+        pageScoreSystem.classList.add('hidden');
+    }
+    // 重置底部tab样式
+    function resetBottomTab() {
+        bottomTabHome.classList.remove('tab-active');
+        bottomTabProfile.classList.remove('tab-active');
+        bottomTabHome.classList.add('tab-normal');
+        bottomTabProfile.classList.add('tab-normal');
+    }
+
+    // 切换到首页
+    bottomTabHome.onclick = function(){
+        hideAllPages();
+        pageHome.classList.remove('hidden');
+        resetBottomTab();
+        bottomTabHome.classList.remove('tab-normal');
+        bottomTabHome.classList.add('tab-active');
+    }
+    // 切换个人中心
+    bottomTabProfile.onclick = function(){
+        hideAllPages();
+        pageProfile.classList.remove('hidden');
+        resetBottomTab();
+        bottomTabProfile.classList.remove('tab-normal');
+        bottomTabProfile.classList.add('tab-active');
+    }
+    // 首页点击考试报名
+    btnExamEntry.onclick = function(){
+        hideAllPages();
+        pageExam.classList.remove('hidden');
+    }
+    // 考试页面点击成绩查询，进入成绩系统，默认打开科目汇总
+    jumpToScorePage.onclick = function(){
+        hideAllPages();
+        pageScoreSystem.classList.remove('hidden');
+        switchScoreTab(tabSubject, pageSubject);
+    }
+
+    // 成绩系统内部标签切换
+    function switchScoreTab(activeTab, activePage){
+        [tabReconsider, tabSubject, tabReport].forEach(t=>{
+            t.classList.remove('tab-active');
+            t.classList.add('tab-normal');
+        })
+        activeTab.classList.remove('tab-normal');
+        activeTab.classList.add('tab-active');
+
+        [pageReconsider, pageSubject, pageReport].forEach(p=>p.classList.add('hidden'));
+        activePage.classList.remove('hidden');
+    }
+    tabReconsider.onclick = ()=>switchScoreTab(tabReconsider, pageReconsider);
+    tabSubject.onclick = ()=>switchScoreTab(tabSubject, pageSubject);
+    tabReport.onclick = ()=>switchScoreTab(tabReport, pageReport);
+
+    // 考季切换（仅样式）
+    const tabCurrentSeason = document.getElementById('tabCurrentSeason');
+    const tabHistorySeason = document.getElementById('tabHistorySeason');
+    tabCurrentSeason.onclick = ()=>{
+        tabCurrentSeason.classList.add('bg-malvernGreen','text-white');
+        tabHistorySeason.classList.remove('bg-malvernGreen','text-white');
+    }
+    tabHistorySeason.onclick = ()=>{
+        tabHistorySeason.classList.add('bg-malvernGreen','text-white');
+        tabCurrentSeason.classList.remove('bg-malvernGreen','text-white');
+    }
+</script>
+</body>
+</html>
